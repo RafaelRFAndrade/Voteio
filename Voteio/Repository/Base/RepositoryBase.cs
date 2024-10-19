@@ -10,6 +10,9 @@ namespace Voteio.Repository.Base
         }
 
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<Ideias> Ideias {  get; set; }
+        public DbSet<Votes> Votes { get; set; }
+        public DbSet<Comentario> Comentario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

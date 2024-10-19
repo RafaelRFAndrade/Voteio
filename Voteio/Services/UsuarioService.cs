@@ -16,6 +16,11 @@ namespace Voteio.Services
             _usuarioRepository = usuarioRepository;
         }
 
+        public Usuario ObterPorId(string id)
+        {
+            return _usuarioRepository.ObterPorId(id);
+        }
+
         public void Cadastrar(CadastrarUsuarioRequest request)
         {
             var usuario = new Usuario

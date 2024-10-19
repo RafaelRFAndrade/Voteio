@@ -24,7 +24,7 @@ namespace Voteio.Repository
 
         public Usuario ObterPorEmail(string email)
         {
-            var sql = @"
+            const string sql = @"
                     SELECT 
                         * 
                     FROM 

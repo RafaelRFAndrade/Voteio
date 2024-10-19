@@ -12,14 +12,14 @@ namespace Voteio.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsuariosController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
-        private readonly ILogger<UsuariosController> _logger;
+        private readonly ILogger<UsuarioController> _logger;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly UsuarioService _usuarioService;
         private readonly TokenService _tokenService;
 
-        public UsuariosController(ILogger<UsuariosController> logger,
+        public UsuarioController(ILogger<UsuarioController> logger,
             IUsuarioRepository usuarioRepository,
             UsuarioService usuarioService,
             TokenService tokenService)
@@ -29,14 +29,15 @@ namespace Voteio.Controllers
             _usuarioService = usuarioService;
             _tokenService = tokenService;
         }
+
         //endpoint teste
         [Authorize]
         [HttpGet]
         public ActionResult<List<Usuario>> GetUsuario()
         {
             //forma de pegar usuario via token
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usuario = _usuarioRepository.ObterPorId(userId);
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usuario = _usuarioService.ObterPorId(usuarioId);
             //
 
             var usuarios = _usuarioRepository.ListarUsuarios();

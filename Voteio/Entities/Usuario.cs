@@ -4,7 +4,7 @@ using Voteio.Messaging.Enums;
 
 namespace Voteio.Entities
 {
-    public class Usuario
+    public class Usuario 
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,10 +23,10 @@ namespace Voteio.Entities
         public string Senha { get; set; } 
 
         [Column(TypeName = "timestamp")]
-        public DateTime DtInclusao { get; set; } = DateTime.UtcNow; 
+        public DateTime DtInclusao { get; set; } = DateTime.Now; 
 
         [Column(TypeName = "timestamp")]
-        public DateTime DtAtualizacao { get; set; } = DateTime.UtcNow; 
+        public DateTime DtAtualizacao { get; set; } = DateTime.Now; 
 
         public Situacao Situacao { get; set; }
 

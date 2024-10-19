@@ -13,17 +13,20 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         //grosso dos reposi
         builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+        builder.Services.AddTransient<IIdeiasRepository, IdeiasRepository>();
+        builder.Services.AddTransient<IComentarioRepository, ComentarioRepository>();
+        builder.Services.AddTransient<IVotesRepository, VotesRepository>();
 
         //grosso dos services kkk
         builder.Services.AddTransient<UsuarioService>();
         builder.Services.AddTransient<TokenService>();
+        builder.Services.AddTransient<IdeiasService>();  
 
         builder.Services.AddDbContext<RepositoryBase>(options =>
             options.UseMySql(
@@ -51,7 +54,7 @@ internal class Program
             };
         });
 
-        //iisop talvez faça um inferno, comente se necessário
+        //isso talvez faça um inferno, comente se necessário
         builder.Services.AddAuthorization();
 
         var app = builder.Build();
