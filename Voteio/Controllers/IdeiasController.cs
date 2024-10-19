@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Voteio.Entities;
 using Voteio.Messaging.Requests;
+using Voteio.Messaging.Responses;
 using Voteio.Messaging.Responses.Base;
 using Voteio.Services;
 
@@ -30,13 +31,13 @@ namespace Voteio.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Ideias>> ObterIdeias()
+        public ActionResult<ListarIdeiasResponse> ObterIdeias()
         {
             try
             {
                 return _ideiasService.ObterIdeias();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;

@@ -1,6 +1,7 @@
 ﻿using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Requests;
+using Voteio.Messaging.Responses;
 
 namespace Voteio.Services
 {
@@ -20,9 +21,30 @@ namespace Voteio.Services
             _votesRepository = votesRepository;
         }
 
-        public List<Ideias> ObterIdeias()
+        public ListarIdeiasResponse ObterIdeias()
         {
-            return _ideiasRepository.ListarIdeias();
+            var ideiasRawQuery = _ideiasRepository.ObterIdeias();
+
+            var listaIdeias = new List<IdeiasDto>();
+
+            foreach(var ideias in ideiasRawQuery)
+            {
+                listaIdeias.Add(new IdeiasDto
+                {
+                    Codigo = ideias.Codigo,
+                    Titulo = ideias.Titulo,
+                    Descricao = ideias.Descricao,
+                    Nota = ideias.Nota,
+                    Comentarios = ObterComentariosPorCodigoIdeia(ideias.Codigo)
+                });
+            }
+
+            return new ListarIdeiasResponse { Ideias = listaIdeias };
+        }
+
+        private List<ComentarioDto> ObterComentariosPorCodigoIdeia(Guid codigo)
+        {
+            return _comentarioRepository.ObterComentariosPorIdeia(codigo);
         }
 
         public void RegistrarIdeia(RegistrarIdeiaRequest registrarIdeiaRequest, Usuario? usuario)
@@ -61,6 +83,8 @@ namespace Voteio.Services
             if (usuario is null)
                 throw new Exception("Usuário não identificado");
 
+            ValidarUsuarioParaAvaliacao(usuario.Codigo);
+
             var vote = new Votes
             {
                 CodigoIdeia = avaliarIdeiaRequest.CodigoIdeia,
@@ -69,6 +93,14 @@ namespace Voteio.Services
             };
 
             _votesRepository.InserirAvaliacao(vote);
+        }
+
+        private void ValidarUsuarioParaAvaliacao(Guid codigoUsuario)
+        {
+            var validarSeJaFoiVotado = _votesRepository.ValidarSeJaFoiVotadoPorUsuario(codigoUsuario);
+
+            if (validarSeJaFoiVotado.Count > 0)
+                throw new Exception("Não é possível votar mais uma vez");
         }
     }
 }
