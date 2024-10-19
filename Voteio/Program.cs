@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Voteio.Interfaces.Repository;
 using Voteio.Repository;
 using Voteio.Repository.Base;
@@ -20,6 +23,7 @@ internal class Program
 
         //grosso dos services kkk
         builder.Services.AddTransient<UsuarioService>();
+        builder.Services.AddTransient<TokenService>();
 
         builder.Services.AddDbContext<RepositoryBase>(options =>
             options.UseMySql(
@@ -28,10 +32,31 @@ internal class Program
             )
         );
 
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            };
+        });
+
+        //iisop talvez faça um inferno, comente se necessário
+        builder.Services.AddAuthorization();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // tem mas to caganu pras pipes kkkkk.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -39,6 +64,9 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
+
+        //esse tabm
+        app.UseAuthentication();
 
         app.UseAuthorization();
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Enums;
@@ -32,6 +33,23 @@ namespace Voteio.Services
             usuario.Senha = passwordHasher.HashPassword(usuario, request.Senha);
 
             _usuarioRepository.InserirUsuario(usuario);
+        }
+
+        public Usuario ValidarLogin(LoginRequest loginRequest)
+        {
+            var usuario = _usuarioRepository.ObterPorEmail(loginRequest.Email);
+
+            if (usuario is null)
+                throw new Exception("Usuário não existe.");
+
+            var passwordHasher = new PasswordHasher<Usuario>();
+
+            var verificarSenha = passwordHasher.VerifyHashedPassword(usuario, usuario.Senha, loginRequest.Password);
+
+            if (verificarSenha == PasswordVerificationResult.Failed)
+                throw new Exception("Senha inválida.");
+
+            return usuario;
         }
     }
 }

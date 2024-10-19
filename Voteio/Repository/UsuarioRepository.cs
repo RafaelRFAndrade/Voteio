@@ -21,5 +21,23 @@ namespace Voteio.Repository
         {
             return Usuario.ToList();
         }
+
+        public Usuario ObterPorEmail(string email)
+        {
+            var sql = @"
+                    SELECT 
+                        * 
+                    FROM 
+                        Voteio.Usuario 
+                    WHERE 
+                        Email = @p0 ";
+
+            return Usuario.FromSqlRaw(sql, email).FirstOrDefault();
+        }
+
+        public Usuario ObterPorId(string userId)
+        {
+            return Find<Usuario>(long.Parse(userId));
+        }
     }
 }

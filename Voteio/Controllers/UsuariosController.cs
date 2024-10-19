@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Requests;
 using Voteio.Messaging.Responses.Base;
-using Voteio.Repository.Base;
 using Voteio.Services;
 
 namespace Voteio.Controllers
@@ -16,19 +17,28 @@ namespace Voteio.Controllers
         private readonly ILogger<UsuariosController> _logger;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly UsuarioService _usuarioService;
+        private readonly TokenService _tokenService;
 
         public UsuariosController(ILogger<UsuariosController> logger,
             IUsuarioRepository usuarioRepository,
-            UsuarioService usuarioService)
+            UsuarioService usuarioService,
+            TokenService tokenService)
         {
             _logger = logger;
             _usuarioRepository = usuarioRepository;
-            _usuarioService = usuarioService;   
+            _usuarioService = usuarioService;
+            _tokenService = tokenService;
         }
-
+        //endpoint teste
+        [Authorize]
         [HttpGet]
         public ActionResult<List<Usuario>> GetUsuario()
         {
+            //forma de pegar usuario via token
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usuario = _usuarioRepository.ObterPorId(userId);
+            //
+
             var usuarios = _usuarioRepository.ListarUsuarios();
 
             return usuarios;
@@ -48,6 +58,16 @@ namespace Voteio.Controllers
                 _logger.LogError($"deu ruim kk {ex.Message}");
                 throw;
             }
-        } 
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        {
+            var usuario = _usuarioService.ValidarLogin(loginRequest);
+
+            var token = _tokenService.GenerateToken(usuario);
+
+            return Ok(new { Token = token });
+        }
     }
 }
