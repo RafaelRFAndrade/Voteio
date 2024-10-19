@@ -26,12 +26,18 @@ namespace Voteio.Repository
                     ie.Codigo,
                     ie.Titulo,
                     ie.Descricao,
-                    (SELECT COUNT(1) FROM Voteio.Votes vt1 WHERE vt1.CodigoIdeia = ie.Codigo AND vt1.TipoVote = {(int)TipoVote.Upvote}) -
-                    (SELECT COUNT(1) FROM Voteio.Votes vt2 WHERE vt2.CodigoIdeia = ie.Codigo AND vt2.TipoVote = {(int)TipoVote.Downvote}) AS Nota
+                    (
+                        SELECT COUNT(1) 
+                        FROM Voteio.Votes vt1 
+                        WHERE vt1.CodigoIdeia = ie.Codigo AND vt1.TipoVote = {(int)TipoVote.Upvote}
+                    ) -
+                    (
+                        SELECT COUNT(1) 
+                        FROM Voteio.Votes vt2 
+                        WHERE vt2.CodigoIdeia = ie.Codigo AND vt2.TipoVote = {(int)TipoVote.Downvote}
+                    ) AS Nota
                 FROM
-                    Voteio.Ideias as ie
-                LEFT JOIN
-                    Voteio.Votes as vt on vt.CodigoIdeia = ie.Codigo ";
+                    Voteio.Ideias AS ie ";
 
             return Database.SqlQueryRaw<ObterIdeiasRawQuery>(sql).ToList();
         }
