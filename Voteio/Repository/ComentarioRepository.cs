@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
-using Voteio.Messaging.RawQuery;
 using Voteio.Messaging.Responses;
 using Voteio.Repository.Base;
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Voteio.Entities;
 using Voteio.Messaging.Requests;
 using Voteio.Messaging.Responses;
 using Voteio.Messaging.Responses.Base;

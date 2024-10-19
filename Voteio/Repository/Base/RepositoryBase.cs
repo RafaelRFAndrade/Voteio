@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Voteio.Entities;
-using Voteio.Messaging.RawQuery;
 
 namespace Voteio.Repository.Base
 {
