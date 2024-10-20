@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Enums;
+using Voteio.Messaging.Exceptions;
 using Voteio.Messaging.Requests;
 
 namespace Voteio.Services
@@ -23,6 +24,11 @@ namespace Voteio.Services
 
         public void Cadastrar(CadastrarUsuarioRequest request)
         {
+            var validarExistenciaUsuario = _usuarioRepository.ObterPorEmail(request.Email);
+
+            if (validarExistenciaUsuario is not null)
+                throw new VoteioException("Usuário já cadastrado com esse email.");
+
             var usuario = new Usuario
             {
                 Nome = request.Nome,

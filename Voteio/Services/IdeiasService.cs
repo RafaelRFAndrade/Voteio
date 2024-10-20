@@ -1,5 +1,6 @@
 ﻿using Voteio.Entities;
 using Voteio.Interfaces.Repository;
+using Voteio.Messaging.Exceptions;
 using Voteio.Messaging.Requests;
 using Voteio.Messaging.Responses;
 
@@ -50,7 +51,7 @@ namespace Voteio.Services
         public void RegistrarIdeia(RegistrarIdeiaRequest registrarIdeiaRequest, Usuario? usuario)
         {
             if (usuario is null)
-                throw new Exception("Usuário não identificado");
+                throw new VoteioException("Usuário não identificado");
 
             var ideia = new Ideias
             {
@@ -66,7 +67,7 @@ namespace Voteio.Services
         public void RegistrarComentario(RegistrarComentarioRequest registrarComentarioRequest, Usuario? usuario)
         {
             if (usuario is null)
-                throw new Exception("Usuário não identificado");
+                throw new VoteioException("Usuário não identificado");
 
             var comentario = new Comentario
             {
@@ -81,7 +82,7 @@ namespace Voteio.Services
         public void AvaliarIdeia(AvaliarIdeiaRequest avaliarIdeiaRequest, Usuario? usuario)
         {
             if (usuario is null)
-                throw new Exception("Usuário não identificado");
+                throw new VoteioException("Usuário não identificado");
 
             ValidarUsuarioParaAvaliacao(usuario.Codigo);
 
@@ -100,7 +101,7 @@ namespace Voteio.Services
             var validarSeJaFoiVotado = _votesRepository.ValidarSeJaFoiVotadoPorUsuario(codigoUsuario);
 
             if (validarSeJaFoiVotado.Count > 0)
-                throw new Exception("Não é possível votar mais uma vez");
+                throw new VoteioException("Não é possível votar mais uma vez");
         }
     }
 }

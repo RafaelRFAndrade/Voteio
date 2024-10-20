@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Voteio.Interfaces.Repository;
+using Voteio.Messaging.Exceptions;
 using Voteio.Messaging.Requests;
 using Voteio.Messaging.Responses.Base;
 using Voteio.Services;
@@ -33,21 +34,37 @@ namespace Voteio.Controllers
 
                 return new ResponseBase();
             }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"deu ruim kk {ex.Message}");
-                throw;
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest loginRequest)
         {
-            var usuario = _usuarioService.ValidarLogin(loginRequest);
+            try
+            {
+                var usuario = _usuarioService.ValidarLogin(loginRequest);
 
-            var token = _tokenService.GenerateToken(usuario);
+                var token = _tokenService.GenerateToken(usuario);
 
-            return Ok(new { Token = token });
+                return Ok(new { Token = token });
+            }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Voteio.Messaging.Exceptions;
 using Voteio.Messaging.Requests;
 using Voteio.Messaging.Responses;
 using Voteio.Messaging.Responses.Base;
@@ -36,10 +37,14 @@ namespace Voteio.Controllers
             {
                 return _ideiasService.ObterIdeias();
             }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw;
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
 
@@ -56,10 +61,14 @@ namespace Voteio.Controllers
 
                 return new ResponseBase();
             }
-            catch(Exception ex)
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw;
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
 
@@ -76,10 +85,14 @@ namespace Voteio.Controllers
 
                 return new ResponseBase();
             }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw;
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
 
@@ -96,10 +109,14 @@ namespace Voteio.Controllers
 
                 return new ResponseBase();
             }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                throw;
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
     }
