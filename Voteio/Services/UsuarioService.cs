@@ -51,14 +51,14 @@ namespace Voteio.Services
             var usuario = _usuarioRepository.ObterPorEmail(loginRequest.Email);
 
             if (usuario is null)
-                throw new Exception("Usuário não existe.");
+                throw new VoteioException("Usuário não existe.");
 
             var passwordHasher = new PasswordHasher<Usuario>();
 
             var verificarSenha = passwordHasher.VerifyHashedPassword(usuario, usuario.Senha, loginRequest.Password);
 
             if (verificarSenha == PasswordVerificationResult.Failed)
-                throw new Exception("Senha inválida.");
+                throw new VoteioException("Senha inválida.");
 
             return usuario;
         }
