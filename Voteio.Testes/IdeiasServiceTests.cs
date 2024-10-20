@@ -99,7 +99,7 @@ namespace Voteio.Testes
             var avaliarRequest = new AvaliarIdeiaRequest { CodigoIdeia = Guid.NewGuid(), TipoVote = TipoVote.Upvote };
             var usuario = new Usuario { Codigo = Guid.NewGuid() };
 
-            _votesRepositoryMock.Setup(repo => repo.ValidarSeJaFoiVotadoPorUsuario(usuario.Codigo))
+            _votesRepositoryMock.Setup(repo => repo.ValidarSeJaFoiVotadoPorUsuario(usuario.Codigo, avaliarRequest.CodigoIdeia))
                 .Returns(new CountRawQuery { Count = 0 });
 
             // Act
@@ -116,7 +116,7 @@ namespace Voteio.Testes
             var avaliarRequest = new AvaliarIdeiaRequest { CodigoIdeia = Guid.NewGuid(), TipoVote = TipoVote.Upvote };
             var usuario = new Usuario { Codigo = Guid.NewGuid() };
 
-            _votesRepositoryMock.Setup(repo => repo.ValidarSeJaFoiVotadoPorUsuario(usuario.Codigo))
+            _votesRepositoryMock.Setup(repo => repo.ValidarSeJaFoiVotadoPorUsuario(usuario.Codigo, avaliarRequest.CodigoIdeia))
                 .Returns(new CountRawQuery { Count = 1 });
 
             // Act & Assert

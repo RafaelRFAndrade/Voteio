@@ -35,7 +35,8 @@ namespace Voteio.Services
                     Codigo = ideias.Codigo,
                     Titulo = ideias.Titulo,
                     Descricao = ideias.Descricao,
-                    Nota = ideias.Nota,
+                    Upvotes = ideias.Upvotes,
+                    Downvotes = ideias.Downvotes,
                     Comentarios = ObterComentariosPorCodigoIdeia(ideias.Codigo)
                 });
             }
@@ -84,7 +85,7 @@ namespace Voteio.Services
             if (usuario is null)
                 throw new VoteioException("Usuário não identificado");
 
-            ValidarUsuarioParaAvaliacao(usuario.Codigo);
+            ValidarUsuarioParaAvaliacao(usuario.Codigo, avaliarIdeiaRequest.CodigoIdeia);
 
             var vote = new Votes
             {
@@ -96,9 +97,19 @@ namespace Voteio.Services
             _votesRepository.InserirAvaliacao(vote);
         }
 
-        private void ValidarUsuarioParaAvaliacao(Guid codigoUsuario)
+        public void DeletarVote(DeletarVoteRequest request, Usuario? usuario)
         {
-            var validarSeJaFoiVotado = _votesRepository.ValidarSeJaFoiVotadoPorUsuario(codigoUsuario);
+            if (usuario is null)
+                throw new VoteioException("Usuário não identificado");
+
+            var vote = _votesRepository.ObterPorIdeiaEUsuario(usuario.Codigo, request.CodigoIdeia);
+
+            _votesRepository.Deletar(vote);
+        }
+
+        private void ValidarUsuarioParaAvaliacao(Guid codigoUsuario, Guid codigoIdeia)
+        {
+            var validarSeJaFoiVotado = _votesRepository.ValidarSeJaFoiVotadoPorUsuario(codigoUsuario, codigoIdeia);
 
             if (validarSeJaFoiVotado.Count > 0)
                 throw new VoteioException("Não é possível votar mais uma vez");

@@ -54,10 +54,23 @@ internal class Program
             };
         });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+        });
+
         //isso talvez faça um inferno, comente se necessário
         builder.Services.AddAuthorization();
 
         var app = builder.Build();
+
+        app.UseCors("AllowSpecificOrigin");
 
         // tem mas to caganu pras pipes kkkkk.
         if (app.Environment.IsDevelopment())

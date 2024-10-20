@@ -4,6 +4,7 @@ using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Enums;
 using Voteio.Messaging.Exceptions;
+using Voteio.Messaging.RawQuery;
 using Voteio.Messaging.Requests;
 
 namespace Voteio.Services
@@ -61,6 +62,11 @@ namespace Voteio.Services
                 throw new VoteioException("Senha inválida.");
 
             return usuario;
+        }
+
+        public List<ObterIdeiasVotadasRawQuery> ObterIdeiasVotadas(Guid codigoUsuario)
+        {
+            return _usuarioRepository.ObterIdeiasVotadas(codigoUsuario);
         }
     }
 }

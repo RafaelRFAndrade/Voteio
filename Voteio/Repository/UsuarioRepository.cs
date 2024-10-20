@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
+using Voteio.Messaging.RawQuery;
 using Voteio.Repository.Base;
 
 namespace Voteio.Repository
@@ -38,6 +39,20 @@ namespace Voteio.Repository
         public Usuario ObterPorId(string userId)
         {
             return Find<Usuario>(long.Parse(userId));
+        }
+
+        public List<ObterIdeiasVotadasRawQuery> ObterIdeiasVotadas(Guid codigoUsuario)
+        {
+            string sql = @"    
+                    SELECT 
+                        CodigoIdeia,
+                        TipoVote
+                    FROM 
+                        Voteio.Votes 
+                    WHERE 
+                        CodigoUsuario = @p0 ";
+
+            return Database.SqlQueryRaw<ObterIdeiasVotadasRawQuery>(sql, codigoUsuario).ToList();
         }
     }
 }

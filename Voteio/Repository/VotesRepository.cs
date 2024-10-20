@@ -18,7 +18,7 @@ namespace Voteio.Repository
             SaveChanges();
         }
 
-        public CountRawQuery ValidarSeJaFoiVotadoPorUsuario(Guid codigoUsuario)
+        public CountRawQuery ValidarSeJaFoiVotadoPorUsuario(Guid codigoUsuario, Guid codigoIdeia)
         {
             const string sql = @"
                 SELECT 
@@ -26,9 +26,30 @@ namespace Voteio.Repository
                 FROM    
                     Voteio.Votes
                 WHERE 
-                    CodigoUsuario = @p0 ";
+                    CodigoUsuario = @p0
+                AND CodigoIdeia = @p1";
 
-            return Database.SqlQueryRaw<CountRawQuery>(sql, codigoUsuario).FirstOrDefault();
+            return Database.SqlQueryRaw<CountRawQuery>(sql, codigoUsuario, codigoIdeia).FirstOrDefault();
+        }
+
+        public Votes ObterPorIdeiaEUsuario(Guid codigoUsuario, Guid codigoIdeia)
+        {
+            const string sql = @"
+                SELECT 
+                   *
+                FROM    
+                    Voteio.Votes
+                WHERE 
+                    CodigoUsuario = @p0
+                AND CodigoIdeia = @p1";
+
+            return Database.SqlQueryRaw<Votes>(sql, codigoUsuario, codigoIdeia).FirstOrDefault();
+        }
+
+        public void Deletar(Votes vote)
+        {
+            Remove(vote);
+            SaveChanges();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Voteio.Entities;
+using Voteio.Messaging.RawQuery;
 
 namespace Voteio.Interfaces.Repository
 {
@@ -8,5 +9,6 @@ namespace Voteio.Interfaces.Repository
         List<Usuario> ListarUsuarios();
         Usuario ObterPorEmail(string email);
         Usuario ObterPorId(string userId);
+        List<ObterIdeiasVotadasRawQuery> ObterIdeiasVotadas(Guid codigoUsuario);
     }
 }

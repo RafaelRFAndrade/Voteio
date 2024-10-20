@@ -30,12 +30,12 @@ namespace Voteio.Repository
                         SELECT COUNT(1) 
                         FROM Voteio.Votes vt1 
                         WHERE vt1.CodigoIdeia = ie.Codigo AND vt1.TipoVote = {(int)TipoVote.Upvote}
-                    ) -
+                    ) AS Upvotes,
                     (
                         SELECT COUNT(1) 
                         FROM Voteio.Votes vt2 
                         WHERE vt2.CodigoIdeia = ie.Codigo AND vt2.TipoVote = {(int)TipoVote.Downvote}
-                    ) AS Nota
+                    ) AS Downvotes
                 FROM
                     Voteio.Ideias AS ie ";
 

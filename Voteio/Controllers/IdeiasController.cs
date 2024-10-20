@@ -119,5 +119,29 @@ namespace Voteio.Controllers
                 return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
             }
         }
+
+        [Authorize]
+        [HttpDelete]
+        public ActionResult<ResponseBase> DeletarVote(DeletarVoteRequest request)
+        {
+            try
+            {
+                var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var usuario = _usuarioService.ObterPorId(usuarioId);
+
+                _ideiasService.DeletarVote(request, usuario);
+
+                return new ResponseBase();
+            }
+            catch (VoteioException ex)
+            {
+                return BadRequest(new { Sucesso = false, Mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Sucesso = false, Mensagem = "Ocorreu um erro de requisição." });
+            }
+        }
     }
 }
