@@ -35,9 +35,12 @@ namespace Voteio.Repository
                         SELECT COUNT(1) 
                         FROM Voteio.Votes vt2 
                         WHERE vt2.CodigoIdeia = ie.Codigo AND vt2.TipoVote = {(int)TipoVote.Downvote}
-                    ) AS Downvotes
+                    ) AS Downvotes,
+                    usu.Nome as NomeUsuario
                 FROM
-                    Voteio.Ideias AS ie ";
+                    Voteio.Ideias AS ie 
+                INNER JOIN 
+                    Voteio.Usuario as usu on ie.CodigoUsuario = usu.Codigo ";
 
             return Database.SqlQueryRaw<ObterIdeiasRawQuery>(sql).ToList();
         }

@@ -37,6 +37,7 @@ namespace Voteio.Services
                     Descricao = ideias.Descricao,
                     Upvotes = ideias.Upvotes,
                     Downvotes = ideias.Downvotes,
+                    NomeUsuario = ideias.NomeUsuario,
                     Comentarios = ObterComentariosPorCodigoIdeia(ideias.Codigo)
                 });
             }
