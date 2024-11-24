@@ -22,9 +22,9 @@ namespace Voteio.Services
             _votesRepository = votesRepository;
         }
 
-        public ListarIdeiasResponse ObterIdeias()
+        public ListarIdeiasResponse ObterIdeias(ObterIdeiasRequest obterIdeiasRequest)
         {
-            var ideiasRawQuery = _ideiasRepository.ObterIdeias();
+            var ideiasRawQuery = _ideiasRepository.ObterIdeias(obterIdeiasRequest);
 
             var listaIdeias = new List<IdeiasDto>();
 

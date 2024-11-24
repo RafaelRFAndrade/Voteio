@@ -3,6 +3,7 @@ using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Enums;
 using Voteio.Messaging.RawQuery;
+using Voteio.Messaging.Requests;
 using Voteio.Repository.Base;
 
 namespace Voteio.Repository
@@ -19,7 +20,7 @@ namespace Voteio.Repository
             SaveChanges();
         }
 
-        public List<ObterIdeiasRawQuery> ObterIdeias()
+        public List<ObterIdeiasRawQuery> ObterIdeias(ObterIdeiasRequest obterIdeiasRequest)
         {
             string sql = $@"
                 SELECT
@@ -41,6 +42,9 @@ namespace Voteio.Repository
                     Voteio.Ideias AS ie 
                 INNER JOIN 
                     Voteio.Usuario as usu on ie.CodigoUsuario = usu.Codigo ";
+
+            if (obterIdeiasRequest.Filtro is not null && !string.IsNullOrWhiteSpace(obterIdeiasRequest.Filtro))
+                sql += $"WHERE ie.Titulo LIKE CONCAT('%','{obterIdeiasRequest.Filtro}','%')";
 
             return Database.SqlQueryRaw<ObterIdeiasRawQuery>(sql).ToList();
         }

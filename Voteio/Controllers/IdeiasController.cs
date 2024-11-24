@@ -31,11 +31,11 @@ namespace Voteio.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ListarIdeiasResponse> ObterIdeias()
+        public ActionResult<ListarIdeiasResponse> ObterIdeias([FromQuery]ObterIdeiasRequest obterIdeiasRequest)
         {
             try
             {
-                return _ideiasService.ObterIdeias();
+                return _ideiasService.ObterIdeias(obterIdeiasRequest);
             }
             catch (VoteioException ex)
             {
