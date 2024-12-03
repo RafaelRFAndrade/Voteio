@@ -34,9 +34,9 @@ Alguns endpoints requerem autenticação via **Bearer Token**. O token é gerado
 ```json
 POST /Usuario
 {
-  "nome": "fodaum",
-  "email": "fodaum@outlook.com",
-  "senha": "123"
+  "nome": "string",
+  "email": "user@example.com",
+  "senha": "string"
 }
 ```
 
@@ -45,8 +45,36 @@ POST /Usuario
 ```json
 POST /Usuario/Login
 {
-  "email": "Bora_Bill@outlook.com",
-  "password": "bill"
+  "email": "string",
+  "password": "string",
+  "twoFactorCode": "string",
+  "twoFactorRecoveryCode": "string"
+}
+```
+
+### Obter Ideias Votadas (Autenticação necessária)
+
+```json
+GET /Usuario/ObterIdeiasVotadas
+{
+  "ideias": [
+    {
+      "codigo": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "titulo": "string",
+      "descricao": "string",
+      "upvotes": 0,
+      "downvotes": 0,
+      "nomeUsuario": "string",
+      "comentarios": [
+        {
+          "codigoUsuario": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "nomeUsuario": "string",
+          "email": "string",
+          "comentario": "string"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -55,8 +83,34 @@ POST /Usuario/Login
 ```json
 POST /Ideias
 {
-  "titulo": "Nova ideia",
-  "descricao": "Descrição da ideia"
+  "titulo": "string",
+  "descricao": "string"
+}
+```
+
+### Listagem de Ideias (Autenticação necessária)
+
+```json
+GET /Ideias
+{
+  "ideias": [
+    {
+      "codigo": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "titulo": "string",
+      "descricao": "string",
+      "upvotes": 0,
+      "downvotes": 0,
+      "nomeUsuario": "string",
+      "comentarios": [
+        {
+          "codigoUsuario": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "nomeUsuario": "string",
+          "email": "string",
+          "comentario": "string"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -65,8 +119,8 @@ POST /Ideias
 ```json
 POST /Ideias/Comentario
 {
-  "ideiaId": "123",
-  "comentario": "Este é um comentário."
+  "codigoIdeia": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "texto": "string"
 }
 ```
 
@@ -75,8 +129,8 @@ POST /Ideias/Comentario
 ```json
 POST /Ideias/Vote
 {
-  "ideiaId": "123",
-  "voto": "positivo"
+  "codigoIdeia": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "tipoVote": 1
 }
 ```
 
@@ -85,7 +139,7 @@ POST /Ideias/Vote
 ```json
 DELETE /Ideias
 {
-  "ideiaId": "123"
+  "codigoIdeia": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 ```
 
