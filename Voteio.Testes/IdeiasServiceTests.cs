@@ -6,10 +6,10 @@ using Voteio.Messaging.Requests;
 using Voteio.Services;
 using Voteio.Messaging.Enums;
 using Voteio.Messaging.RawQuery;
+using FluentAssertions;
 
 namespace Voteio.Testes
 {
-
     public class IdeiasServiceTests
     {
         private readonly Mock<IIdeiasRepository> _ideiasRepositoryMock;
@@ -29,19 +29,21 @@ namespace Voteio.Testes
         }
 
         [Fact]
-        public void RegistrarIdeia_QuandoUsuarioENull()
+        public void RegistrarIdeia_ShouldThrowException_WhenUsuarioIsNull()
         {
             // Arrange
             var registrarRequest = new RegistrarIdeiaRequest { Titulo = "Ideia Teste", Descricao = "Descricao Teste" };
             Usuario? usuario = null;
 
-            // Act & Assert
-            var exception = Assert.Throws<VoteioException>(() => _ideiasService.RegistrarIdeia(registrarRequest, usuario));
-            Assert.Equal("Usuário não identificado", exception.Message);
+            // Act
+            Action act = () => _ideiasService.RegistrarIdeia(registrarRequest, usuario);
+
+            // Assert
+            act.Should().Throw<VoteioException>().WithMessage("Usuário não identificado");
         }
 
         [Fact]
-        public void RegistrarIdeia_ChamaRepo_QuandoUsuarioEValido()
+        public void RegistrarIdeia_ShouldCallRepository_WhenUsuarioIsValid()
         {
             // Arrange
             var registrarRequest = new RegistrarIdeiaRequest { Titulo = "Ideia Teste", Descricao = "Descricao Teste" };
@@ -55,19 +57,21 @@ namespace Voteio.Testes
         }
 
         [Fact]
-        public void RegistrarComentario_DaException_QuandoUsuarioENull()
+        public void RegistrarComentario_ShouldThrowException_WhenUsuarioIsNull()
         {
             // Arrange
             var registrarRequest = new RegistrarComentarioRequest { CodigoIdeia = Guid.NewGuid(), Texto = "Comentario Teste" };
             Usuario? usuario = null;
 
-            // Act & Assert
-            var exception = Assert.Throws<VoteioException>(() => _ideiasService.RegistrarComentario(registrarRequest, usuario));
-            Assert.Equal("Usuário não identificado", exception.Message);
+            // Act
+            Action act = () => _ideiasService.RegistrarComentario(registrarRequest, usuario);
+
+            // Assert
+            act.Should().Throw<VoteioException>().WithMessage("Usuário não identificado");
         }
 
         [Fact]
-        public void RegistrarComentario_ChamaRepo_QuandoUsuarioEValido()
+        public void RegistrarComentario_ShouldCallRepository_WhenUsuarioIsValid()
         {
             // Arrange
             var registrarRequest = new RegistrarComentarioRequest { CodigoIdeia = Guid.NewGuid(), Texto = "Comentario Teste" };
@@ -81,19 +85,21 @@ namespace Voteio.Testes
         }
 
         [Fact]
-        public void AvaliarIdeia_DaException_QuandoUsuarioENull()
+        public void AvaliarIdeia_ShouldThrowException_WhenUsuarioIsNull()
         {
             // Arrange
             var avaliarRequest = new AvaliarIdeiaRequest { CodigoIdeia = Guid.NewGuid(), TipoVote = TipoVote.Upvote };
             Usuario? usuario = null;
 
-            // Act & Assert
-            var exception = Assert.Throws<VoteioException>(() => _ideiasService.AvaliarIdeia(avaliarRequest, usuario));
-            Assert.Equal("Usuário não identificado", exception.Message);
+            // Act
+            Action act = () => _ideiasService.AvaliarIdeia(avaliarRequest, usuario);
+
+            // Assert
+            act.Should().Throw<VoteioException>().WithMessage("Usuário não identificado");
         }
 
         [Fact]
-        public void AvaliarIdeia_ChamaRepo_QuandoUsuarioEValido()
+        public void AvaliarIdeia_ShouldCallRepository_WhenUsuarioIsValid()
         {
             // Arrange
             var avaliarRequest = new AvaliarIdeiaRequest { CodigoIdeia = Guid.NewGuid(), TipoVote = TipoVote.Upvote };
@@ -110,7 +116,7 @@ namespace Voteio.Testes
         }
 
         [Fact]
-        public void AvaliarIdeia_DaException_QuandoUsuarioJaVotou()
+        public void AvaliarIdeia_ShouldThrowException_WhenUsuarioJaVotou()
         {
             // Arrange
             var avaliarRequest = new AvaliarIdeiaRequest { CodigoIdeia = Guid.NewGuid(), TipoVote = TipoVote.Upvote };
@@ -119,9 +125,11 @@ namespace Voteio.Testes
             _votesRepositoryMock.Setup(repo => repo.ValidarSeJaFoiVotadoPorUsuario(usuario.Codigo, avaliarRequest.CodigoIdeia))
                 .Returns(new CountRawQuery { Count = 1 });
 
-            // Act & Assert
-            var exception = Assert.Throws<VoteioException>(() => _ideiasService.AvaliarIdeia(avaliarRequest, usuario));
-            Assert.Equal("Não é possível votar mais uma vez", exception.Message);
+            // Act
+            Action act = () => _ideiasService.AvaliarIdeia(avaliarRequest, usuario);
+
+            // Assert
+            act.Should().Throw<VoteioException>().WithMessage("Não é possível votar mais uma vez");
         }
     }
 }
