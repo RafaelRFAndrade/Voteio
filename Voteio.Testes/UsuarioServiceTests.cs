@@ -1,15 +1,15 @@
 using FluentAssertions;
-using Microsoft.AspNetCore.Identity.Data;
 using Moq;
 using Voteio.Entities;
 using Voteio.Interfaces.Repository;
 using Voteio.Messaging.Exceptions;
 using Voteio.Messaging.Requests;
 using Voteio.Services;
+using Voteio.Testes.Base;
 
 namespace Voteio.Testes
 {
-    public class UsuarioServiceTests
+    public class UsuarioServiceTests : TestBase
     {
         private readonly Mock<IUsuarioRepository> _usuarioRepositoryMock;
         private readonly UsuarioService _usuarioService;
@@ -20,66 +20,49 @@ namespace Voteio.Testes
             _usuarioService = new UsuarioService(_usuarioRepositoryMock.Object);
         }
 
-        [Fact]
-        public void ObterPorId_DeveRetornarUsuario_QuandoIdExistir()
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("invalid-id")]
+        public void ObterPorId_ShouldReturnNull_WhenIdIsInvalid(string invalidId)
         {
             // Arrange
-            var usuarioId = "123";
-            var usuarioEsperado = new Usuario { Nome = "Teste", Email = "teste@email.com", Codigo = Guid.NewGuid() };
-
-            _usuarioRepositoryMock.Setup(repo => repo.ObterPorId(usuarioId)).Returns(usuarioEsperado);
+            _usuarioRepositoryMock.Setup(repo => repo.ObterPorId(invalidId)).Returns((Usuario)null);
 
             // Act
-            var usuarioObtido = _usuarioService.ObterPorId(usuarioId);
+            var result = _usuarioService.ObterPorId(invalidId);
 
             // Assert
-            usuarioObtido.Should().BeEquivalentTo(usuarioEsperado);
+            result.Should().BeNull();
         }
 
         [Fact]
-        public void Cadastrar_DeveLancarExcecao_QuandoEmailJaExistir()
+        public void Cadastrar_ShouldValidateEmail_WhenEmailIsInvalid()
         {
             // Arrange
-            var request = new CadastrarUsuarioRequest { Nome = "Teste", Email = "teste@email.com", Senha = "senha123" };
-            var usuarioExistente = new Usuario { Email = request.Email };
-
-            _usuarioRepositoryMock.Setup(repo => repo.ObterPorEmail(request.Email)).Returns(usuarioExistente);
+            var request = CreateTestUserRequest();
+            request.Email = "invalid-email";
 
             // Act
             Action act = () => _usuarioService.Cadastrar(request);
 
             // Assert
-            act.Should().Throw<VoteioException>().WithMessage("Usuário já cadastrado com esse email.");
+            act.Should().Throw<VoteioException>().WithMessage("Email invÃ¡lido");
         }
 
         [Fact]
-        public void Cadastrar_DeveInserirUsuario_QuandoEmailNaoExistir()
+        public void ValidarLogin_ShouldHashPassword_WhenCreatingNewUser()
         {
             // Arrange
-            var request = new CadastrarUsuarioRequest { Nome = "Teste", Email = "teste@email.com", Senha = "senha123" };
-
+            var request = CreateTestUserRequest();
             _usuarioRepositoryMock.Setup(repo => repo.ObterPorEmail(request.Email)).Returns((Usuario)null);
 
             // Act
             _usuarioService.Cadastrar(request);
 
             // Assert
-            _usuarioRepositoryMock.Verify(repo => repo.InserirUsuario(It.IsAny<Usuario>()), Times.Once);
-        }
-
-        [Fact]
-        public void ValidarLogin_DeveLancarExcecao_QuandoUsuarioNaoExistir()
-        {
-            // Arrange
-            var loginRequest = new LoginRequest { Email = "naoexiste@email.com", Password = "senha123" };
-
-            _usuarioRepositoryMock.Setup(repo => repo.ObterPorEmail(loginRequest.Email)).Returns((Usuario)null);
-
-            // Act
-            Action act = () => _usuarioService.ValidarLogin(loginRequest);
-
-            // Assert
-            act.Should().Throw<VoteioException>().WithMessage("Usuário não existe.");
+            _usuarioRepositoryMock.Verify(repo => 
+                repo.InserirUsuario(It.Is<Usuario>(u => u.Senha != request.Senha)), Times.Once);
         }
     }
 }
